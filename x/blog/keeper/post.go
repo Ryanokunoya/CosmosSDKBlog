@@ -7,13 +7,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/example/blog/x/blog/types"
 	blogTypes "github.com/example/blog/x/blog/types"
 )
 
 // GetPostCount get the total number of post
 func (k Keeper) GetPostCount(ctx sdk.Context) int64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(blogTypes.PostCountKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostCountKey))
 	byteKey := blogTypes.KeyPrefix(blogTypes.PostCountKey)
 	bz := store.Get(byteKey)
 

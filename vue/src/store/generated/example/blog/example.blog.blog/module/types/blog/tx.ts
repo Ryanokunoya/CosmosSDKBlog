@@ -8,7 +8,9 @@ export const protobufPackage = "example.blog.blog";
 export interface MsgCreateComment {
   creator: string;
   body: string;
+  id: string;
   postID: string;
+  time: number;
 }
 
 export interface MsgCreateCommentResponse {
@@ -31,7 +33,13 @@ export interface MsgDeleteComment {
 
 export interface MsgDeleteCommentResponse {}
 
-const baseMsgCreateComment: object = { creator: "", body: "", postID: "" };
+const baseMsgCreateComment: object = {
+  creator: "",
+  body: "",
+  id: "",
+  postID: "",
+  time: 0,
+};
 
 export const MsgCreateComment = {
   encode(message: MsgCreateComment, writer: Writer = Writer.create()): Writer {
@@ -41,8 +49,14 @@ export const MsgCreateComment = {
     if (message.body !== "") {
       writer.uint32(18).string(message.body);
     }
+    if (message.id !== "") {
+      writer.uint32(26).string(message.id);
+    }
     if (message.postID !== "") {
-      writer.uint32(26).string(message.postID);
+      writer.uint32(34).string(message.postID);
+    }
+    if (message.time !== 0) {
+      writer.uint32(40).uint64(message.time);
     }
     return writer;
   },
@@ -61,7 +75,13 @@ export const MsgCreateComment = {
           message.body = reader.string();
           break;
         case 3:
+          message.id = reader.string();
+          break;
+        case 4:
           message.postID = reader.string();
+          break;
+        case 5:
+          message.time = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -83,10 +103,20 @@ export const MsgCreateComment = {
     } else {
       message.body = "";
     }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
+    } else {
+      message.id = "";
+    }
     if (object.postID !== undefined && object.postID !== null) {
       message.postID = String(object.postID);
     } else {
       message.postID = "";
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time);
+    } else {
+      message.time = 0;
     }
     return message;
   },
@@ -95,7 +125,9 @@ export const MsgCreateComment = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.body !== undefined && (obj.body = message.body);
+    message.id !== undefined && (obj.id = message.id);
     message.postID !== undefined && (obj.postID = message.postID);
+    message.time !== undefined && (obj.time = message.time);
     return obj;
   },
 
@@ -111,10 +143,20 @@ export const MsgCreateComment = {
     } else {
       message.body = "";
     }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = "";
+    }
     if (object.postID !== undefined && object.postID !== null) {
       message.postID = object.postID;
     } else {
       message.postID = "";
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time;
+    } else {
+      message.time = 0;
     }
     return message;
   },

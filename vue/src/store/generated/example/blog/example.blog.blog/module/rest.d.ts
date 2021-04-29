@@ -16,6 +16,7 @@ export interface BlogPost {
     id?: string;
     title?: string;
     body?: string;
+    comments?: BlogComment[];
 }
 export interface BlogQueryAllCommentResponse {
     Comment?: BlogComment[];

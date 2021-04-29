@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Comment } from "../blog/comment";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "example.blog.blog";
@@ -10,6 +11,7 @@ export interface Post {
   id: string;
   title: string;
   body: string;
+  comments: Comment[];
 }
 
 export interface MsgCreatePost {
@@ -34,6 +36,9 @@ export const Post = {
     if (message.body !== "") {
       writer.uint32(34).string(message.body);
     }
+    for (const v of message.comments) {
+      Comment.encode(v!, writer.uint32(42).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -41,6 +46,7 @@ export const Post = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...basePost } as Post;
+    message.comments = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -56,6 +62,9 @@ export const Post = {
         case 4:
           message.body = reader.string();
           break;
+        case 5:
+          message.comments.push(Comment.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -66,6 +75,7 @@ export const Post = {
 
   fromJSON(object: any): Post {
     const message = { ...basePost } as Post;
+    message.comments = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -86,6 +96,11 @@ export const Post = {
     } else {
       message.body = "";
     }
+    if (object.comments !== undefined && object.comments !== null) {
+      for (const e of object.comments) {
+        message.comments.push(Comment.fromJSON(e));
+      }
+    }
     return message;
   },
 
@@ -95,11 +110,19 @@ export const Post = {
     message.id !== undefined && (obj.id = message.id);
     message.title !== undefined && (obj.title = message.title);
     message.body !== undefined && (obj.body = message.body);
+    if (message.comments) {
+      obj.comments = message.comments.map((e) =>
+        e ? Comment.toJSON(e) : undefined
+      );
+    } else {
+      obj.comments = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<Post>): Post {
     const message = { ...basePost } as Post;
+    message.comments = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -119,6 +142,11 @@ export const Post = {
       message.body = object.body;
     } else {
       message.body = "";
+    }
+    if (object.comments !== undefined && object.comments !== null) {
+      for (const e of object.comments) {
+        message.comments.push(Comment.fromPartial(e));
+      }
     }
     return message;
   },
