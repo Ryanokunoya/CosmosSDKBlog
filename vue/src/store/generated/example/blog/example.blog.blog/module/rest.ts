@@ -23,9 +23,18 @@ export interface BlogMsgCreateCommentResponse {
   id?: string;
 }
 
+export interface BlogMsgCreatePostResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export type BlogMsgDeleteCommentResponse = object;
 
+export type BlogMsgDeletePostResponse = object;
+
 export type BlogMsgUpdateCommentResponse = object;
+
+export type BlogMsgUpdatePostResponse = object;
 
 export interface BlogPost {
   creator?: string;
@@ -350,6 +359,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    */
   queryCommentAll = (
     query?: {
+      postID?: string;
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;

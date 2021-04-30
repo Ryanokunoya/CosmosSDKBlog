@@ -4,7 +4,7 @@ package example.blog.blog;
 
 option go_package = "github.com/example/blog/x/blog/types";
 
-import "gogoproto/gogo.proto";
+//import "gogoproto/gogo.proto";
 import "blog/comment.proto";
 
 message Post {
@@ -15,9 +15,5 @@ message Post {
   repeated Comment comments = 5;
 }
 
-message MsgCreatePost {
-  string creator = 1;
-  string title = 2; 
-  string body = 3; 
-}
+
 

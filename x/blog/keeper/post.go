@@ -31,15 +31,6 @@ func (k Keeper) GetPostCount(ctx sdk.Context) uint64 {
 
 	return count
 }
-
-// SetPostCount set the total number of post
-func (k Keeper) SetPostCount(ctx sdk.Context, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostCountKey))
-	byteKey := blogTypes.KeyPrefix(blogTypes.PostCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
-	store.Set(byteKey, bz)
-}
-
 func (k Keeper) CreatePost(ctx sdk.Context, msg blogTypes.MsgCreatePost) uint64 {
 	// Create the post
 	count := k.GetPostCount(ctx)
@@ -59,11 +50,56 @@ func (k Keeper) CreatePost(ctx sdk.Context, msg blogTypes.MsgCreatePost) uint64 
 	return count
 }
 
-func (k Keeper) GetPost(ctx sdk.Context, key string) blogTypes.Post {
+// SetPostCount set the total number of post
+func (k Keeper) SetPostCount(ctx sdk.Context, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostCountKey))
+	byteKey := blogTypes.KeyPrefix(blogTypes.PostCountKey)
+	bz := []byte(strconv.FormatUint(count, 10))
+	store.Set(byteKey, bz)
+}
+
+func (k Keeper) AppendPost(
+	ctx sdk.Context,
+	creator string,
+	title string,
+	body string,
+) uint64 {
+	// Create the post
+	count := k.GetPostCount(ctx)
+	var post = blogTypes.Post{
+		Creator: creator,
+		Id:      count,
+		Title:   title,
+		Body:    body,
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
+	value := k.cdc.MustMarshalBinaryBare(&post)
+	store.Set(GetPostIDBytes(post.Id), value)
+
+	// Update post count
+	k.SetPostCount(ctx, count+1)
+
+	return count
+}
+
+func (k Keeper) GetPost(ctx sdk.Context, key uint64) blogTypes.Post {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
 	var post blogTypes.Post
-	k.cdc.MustUnmarshalBinaryBare(store.Get(blogTypes.KeyPrefix(blogTypes.PostKey+key)), &post)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetPostIDBytes(key)), &post)
 	return post
+}
+
+// SetPost set a specific post in the store
+func (k Keeper) SetPost(ctx sdk.Context, post blogTypes.Post) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
+	b := k.cdc.MustMarshalBinaryBare(&post)
+	store.Set(GetPostIDBytes(post.Id), b)
+}
+
+func (k Keeper) RemovePost(ctx sdk.Context, id uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
+	store.Delete(GetPostIDBytes(id))
 }
 
 func (k Keeper) HasPost(ctx sdk.Context, id uint64) bool {
@@ -71,7 +107,7 @@ func (k Keeper) HasPost(ctx sdk.Context, id uint64) bool {
 	return store.Has(GetPostIDBytes(id))
 }
 
-func (k Keeper) GetPostOwner(ctx sdk.Context, key string) string {
+func (k Keeper) GetPostOwner(ctx sdk.Context, key uint64) string {
 	return k.GetPost(ctx, key).Creator
 }
 

@@ -11,21 +11,21 @@ import (
 	"github.com/example/blog/x/blog/types"
 )
 
-func CmdCreateComment() *cobra.Command {
+func CmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-comment [body] [postID]",
-		Short: "Creates a new comment",
+		Use:   "create-post [title] [body]",
+		Short: "Creates a new post",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsBody := string(args[0])
-			argsPostID := string(args[1])
+			argsTitle := string(args[0])
+			argsBody := string(args[1])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), string(argsBody), string(argsPostID))
+			msg := types.NewMsgCreatePost(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsBody))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -38,10 +38,10 @@ func CmdCreateComment() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateComment() *cobra.Command {
+func CmdUpdatePost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-comment [id] [body] [postID]",
-		Short: "Update a comment",
+		Use:   "update-post [id] [title] [body]",
+		Short: "Update a post",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
@@ -49,15 +49,15 @@ func CmdUpdateComment() *cobra.Command {
 				return err
 			}
 
-			argsBody := string(args[1])
-			argsPostID := string(args[2])
+			argsTitle := string(args[1])
+			argsBody := string(args[2])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateComment(clientCtx.GetFromAddress().String(), id, string(argsBody), string(argsPostID))
+			msg := types.NewMsgUpdatePost(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsBody))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -70,10 +70,10 @@ func CmdUpdateComment() *cobra.Command {
 	return cmd
 }
 
-func CmdDeleteComment() *cobra.Command {
+func CmdDeletePost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-comment [id]",
-		Short: "Delete a comment by id",
+		Use:   "delete-post [id] [title] [body]",
+		Short: "Delete a post by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
@@ -86,7 +86,7 @@ func CmdDeleteComment() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteComment(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeletePost(clientCtx.GetFromAddress().String(), id)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

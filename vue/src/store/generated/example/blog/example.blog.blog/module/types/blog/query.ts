@@ -22,6 +22,7 @@ export interface QueryGetCommentResponse {
 }
 
 export interface QueryAllCommentRequest {
+  postID: string;
   pagination: PageRequest | undefined;
 }
 
@@ -176,15 +177,18 @@ export const QueryGetCommentResponse = {
   },
 };
 
-const baseQueryAllCommentRequest: object = {};
+const baseQueryAllCommentRequest: object = { postID: "" };
 
 export const QueryAllCommentRequest = {
   encode(
     message: QueryAllCommentRequest,
     writer: Writer = Writer.create()
   ): Writer {
+    if (message.postID !== "") {
+      writer.uint32(10).string(message.postID);
+    }
     if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -197,6 +201,9 @@ export const QueryAllCommentRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          message.postID = reader.string();
+          break;
+        case 2:
           message.pagination = PageRequest.decode(reader, reader.uint32());
           break;
         default:
@@ -209,6 +216,11 @@ export const QueryAllCommentRequest = {
 
   fromJSON(object: any): QueryAllCommentRequest {
     const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = String(object.postID);
+    } else {
+      message.postID = "";
+    }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromJSON(object.pagination);
     } else {
@@ -219,6 +231,7 @@ export const QueryAllCommentRequest = {
 
   toJSON(message: QueryAllCommentRequest): unknown {
     const obj: any = {};
+    message.postID !== undefined && (obj.postID = message.postID);
     message.pagination !== undefined &&
       (obj.pagination = message.pagination
         ? PageRequest.toJSON(message.pagination)
@@ -230,6 +243,11 @@ export const QueryAllCommentRequest = {
     object: DeepPartial<QueryAllCommentRequest>
   ): QueryAllCommentRequest {
     const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = object.postID;
+    } else {
+      message.postID = "";
+    }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromPartial(object.pagination);
     } else {

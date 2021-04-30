@@ -2,14 +2,18 @@
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
+import { MsgCreatePost } from "./types/blog/tx";
 import { MsgCreateComment } from "./types/blog/tx";
+import { MsgDeletePost } from "./types/blog/tx";
 import { MsgDeleteComment } from "./types/blog/tx";
-import { MsgCreatePost } from "./types/blog/post";
+import { MsgUpdatePost } from "./types/blog/tx";
 import { MsgUpdateComment } from "./types/blog/tx";
 const types = [
-    ["/example.blog.blog.MsgCreateComment", MsgCreateComment],
-    ["/example.blog.blog.MsgDeleteComment", MsgDeleteComment],
     ["/example.blog.blog.MsgCreatePost", MsgCreatePost],
+    ["/example.blog.blog.MsgCreateComment", MsgCreateComment],
+    ["/example.blog.blog.MsgDeletePost", MsgDeletePost],
+    ["/example.blog.blog.MsgDeleteComment", MsgDeleteComment],
+    ["/example.blog.blog.MsgUpdatePost", MsgUpdatePost],
     ["/example.blog.blog.MsgUpdateComment", MsgUpdateComment],
 ];
 const registry = new Registry(types);
@@ -24,9 +28,11 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     const { address } = (await wallet.getAccounts())[0];
     return {
         signAndBroadcast: (msgs, { fee = defaultFee, memo = null }) => memo ? client.signAndBroadcast(address, msgs, fee, memo) : client.signAndBroadcast(address, msgs, fee),
-        msgCreateComment: (data) => ({ typeUrl: "/example.blog.blog.MsgCreateComment", value: data }),
-        msgDeleteComment: (data) => ({ typeUrl: "/example.blog.blog.MsgDeleteComment", value: data }),
         msgCreatePost: (data) => ({ typeUrl: "/example.blog.blog.MsgCreatePost", value: data }),
+        msgCreateComment: (data) => ({ typeUrl: "/example.blog.blog.MsgCreateComment", value: data }),
+        msgDeletePost: (data) => ({ typeUrl: "/example.blog.blog.MsgDeletePost", value: data }),
+        msgDeleteComment: (data) => ({ typeUrl: "/example.blog.blog.MsgDeleteComment", value: data }),
+        msgUpdatePost: (data) => ({ typeUrl: "/example.blog.blog.MsgUpdatePost", value: data }),
         msgUpdateComment: (data) => ({ typeUrl: "/example.blog.blog.MsgUpdateComment", value: data }),
     };
 };

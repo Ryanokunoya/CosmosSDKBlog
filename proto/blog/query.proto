@@ -38,7 +38,8 @@ message QueryGetCommentResponse {
 }
 
 message QueryAllCommentRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+	string postID = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 message QueryAllCommentResponse {

@@ -1,9 +1,12 @@
+import { Post } from "../blog/post";
 import { Comment } from "../blog/comment";
 import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "example.blog.blog";
 /** GenesisState defines the capability module's genesis state. */
 export interface GenesisState {
-    /** this line is used by starport scaffolding # genesis/proto/state */
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
+    postList: Post[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     commentList: Comment[];
 }
 export declare const GenesisState: {

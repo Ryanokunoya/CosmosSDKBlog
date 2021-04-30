@@ -9,8 +9,14 @@ export interface BlogMsgCreateCommentResponse {
     /** @format uint64 */
     id?: string;
 }
+export interface BlogMsgCreatePostResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export declare type BlogMsgDeleteCommentResponse = object;
+export declare type BlogMsgDeletePostResponse = object;
 export declare type BlogMsgUpdateCommentResponse = object;
+export declare type BlogMsgUpdatePostResponse = object;
 export interface BlogPost {
     creator?: string;
     /** @format uint64 */
@@ -178,6 +184,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/example/blog/blog/comment
      */
     queryCommentAll: (query?: {
+        postID?: string;
         "pagination.key"?: string;
         "pagination.offset"?: string;
         "pagination.limit"?: string;

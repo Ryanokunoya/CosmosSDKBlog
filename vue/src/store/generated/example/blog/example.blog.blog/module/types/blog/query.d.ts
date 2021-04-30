@@ -12,6 +12,7 @@ export interface QueryGetCommentResponse {
     Comment: Comment | undefined;
 }
 export interface QueryAllCommentRequest {
+    postID: string;
     pagination: PageRequest | undefined;
 }
 export interface QueryAllCommentResponse {

@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
@@ -13,6 +14,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteComment{}, "blog/DeleteComment", nil)
 
 	cdc.RegisterConcrete(&MsgCreatePost{}, "blog/CreatePost", nil)
+	cdc.RegisterConcrete(&MsgUpdatePost{}, "katha/UpdatePost", nil)
+	cdc.RegisterConcrete(&MsgDeletePost{}, "katha/DeletePost", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -25,7 +28,11 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreatePost{},
+		&MsgUpdatePost{},
+		&MsgDeletePost{},
 	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 var (

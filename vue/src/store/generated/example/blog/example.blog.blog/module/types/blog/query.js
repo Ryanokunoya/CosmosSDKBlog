@@ -116,11 +116,14 @@ export const QueryGetCommentResponse = {
         return message;
     },
 };
-const baseQueryAllCommentRequest = {};
+const baseQueryAllCommentRequest = { postID: "" };
 export const QueryAllCommentRequest = {
     encode(message, writer = Writer.create()) {
+        if (message.postID !== "") {
+            writer.uint32(10).string(message.postID);
+        }
         if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+            PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
         }
         return writer;
     },
@@ -132,6 +135,9 @@ export const QueryAllCommentRequest = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
+                    message.postID = reader.string();
+                    break;
+                case 2:
                     message.pagination = PageRequest.decode(reader, reader.uint32());
                     break;
                 default:
@@ -143,6 +149,12 @@ export const QueryAllCommentRequest = {
     },
     fromJSON(object) {
         const message = { ...baseQueryAllCommentRequest };
+        if (object.postID !== undefined && object.postID !== null) {
+            message.postID = String(object.postID);
+        }
+        else {
+            message.postID = "";
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromJSON(object.pagination);
         }
@@ -153,6 +165,7 @@ export const QueryAllCommentRequest = {
     },
     toJSON(message) {
         const obj = {};
+        message.postID !== undefined && (obj.postID = message.postID);
         message.pagination !== undefined &&
             (obj.pagination = message.pagination
                 ? PageRequest.toJSON(message.pagination)
@@ -161,6 +174,12 @@ export const QueryAllCommentRequest = {
     },
     fromPartial(object) {
         const message = { ...baseQueryAllCommentRequest };
+        if (object.postID !== undefined && object.postID !== null) {
+            message.postID = object.postID;
+        }
+        else {
+            message.postID = "";
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromPartial(object.pagination);
         }

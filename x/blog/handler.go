@@ -11,21 +11,35 @@ import (
 
 // NewHandler ...
 func NewHandler(k keeper.Keeper) sdk.Handler {
-	//msgServer := keeper.NewMsgServerImpl(k)
+	msgServer := keeper.NewMsgServerImpl(k)
 
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgCreatePost:
-			return handleMsgCreatePost(ctx, k, msg)
 		case *types.MsgCreateComment:
-			return handleMsgCreateComment(ctx, k, msg)
-		case *types.MsgUpdateComment:
-			return handleMsgUpdateComment(ctx, k, msg)
-		case *types.MsgDeleteComment:
-			return handleMsgDeleteComment(ctx, k, msg)
+			res, err := msgServer.CreateComment(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateComment:
+			res, err := msgServer.UpdateComment(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteComment:
+			res, err := msgServer.DeleteComment(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgCreatePost:
+			res, err := msgServer.CreatePost(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdatePost:
+			res, err := msgServer.UpdatePost(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeletePost:
+			res, err := msgServer.DeletePost(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
