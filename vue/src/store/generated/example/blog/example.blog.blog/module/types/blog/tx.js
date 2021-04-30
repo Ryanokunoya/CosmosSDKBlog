@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
+import { Comment } from "../blog/comment";
 export const protobufPackage = "example.blog.blog";
 const baseMsgCreateComment = {
     creator: "",
@@ -463,12 +464,16 @@ export const MsgCreatePost = {
         if (message.body !== "") {
             writer.uint32(26).string(message.body);
         }
+        for (const v of message.comment) {
+            Comment.encode(v, writer.uint32(34).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgCreatePost };
+        message.comment = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -481,6 +486,9 @@ export const MsgCreatePost = {
                 case 3:
                     message.body = reader.string();
                     break;
+                case 4:
+                    message.comment.push(Comment.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -490,6 +498,7 @@ export const MsgCreatePost = {
     },
     fromJSON(object) {
         const message = { ...baseMsgCreatePost };
+        message.comment = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -508,6 +517,11 @@ export const MsgCreatePost = {
         else {
             message.body = "";
         }
+        if (object.comment !== undefined && object.comment !== null) {
+            for (const e of object.comment) {
+                message.comment.push(Comment.fromJSON(e));
+            }
+        }
         return message;
     },
     toJSON(message) {
@@ -515,10 +529,17 @@ export const MsgCreatePost = {
         message.creator !== undefined && (obj.creator = message.creator);
         message.title !== undefined && (obj.title = message.title);
         message.body !== undefined && (obj.body = message.body);
+        if (message.comment) {
+            obj.comment = message.comment.map((e) => e ? Comment.toJSON(e) : undefined);
+        }
+        else {
+            obj.comment = [];
+        }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseMsgCreatePost };
+        message.comment = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -536,6 +557,11 @@ export const MsgCreatePost = {
         }
         else {
             message.body = "";
+        }
+        if (object.comment !== undefined && object.comment !== null) {
+            for (const e of object.comment) {
+                message.comment.push(Comment.fromPartial(e));
+            }
         }
         return message;
     },

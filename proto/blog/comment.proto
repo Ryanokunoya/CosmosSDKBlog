@@ -3,7 +3,7 @@ package example.blog.blog;
 
 option go_package = "github.com/example/blog/x/blog/types";
 
-import "gogoproto/gogo.proto";
+//import "gogoproto/gogo.proto";
 
 message Comment {
   string creator = 1;

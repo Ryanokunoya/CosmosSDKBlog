@@ -72,7 +72,7 @@ func CmdUpdatePost() *cobra.Command {
 
 func CmdDeletePost() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-post [id] [title] [body]",
+		Use:   "delete-post [id]",
 		Short: "Delete a post by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

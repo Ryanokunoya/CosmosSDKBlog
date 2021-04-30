@@ -1,4 +1,5 @@
 import { Reader, Writer } from "protobufjs/minimal";
+import { Comment } from "../blog/comment";
 export declare const protobufPackage = "example.blog.blog";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateComment {
@@ -29,6 +30,7 @@ export interface MsgCreatePost {
     creator: string;
     title: string;
     body: string;
+    comment: Comment[];
 }
 export interface MsgCreatePostResponse {
     id: number;

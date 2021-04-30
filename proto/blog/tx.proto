@@ -2,7 +2,7 @@ syntax = "proto3";
 package example.blog.blog;
 
 // this line is used by starport scaffolding # proto/tx/import
-
+import "blog/comment.proto";
 option go_package = "github.com/example/blog/x/blog/types";
 
 // Msg defines the Msg service.
@@ -49,6 +49,7 @@ message MsgCreatePost {
   string creator = 1;
   string title = 2; 
   string body = 3; 
+  repeated Comment comment = 4;
 }
 
 message MsgCreatePostResponse {
