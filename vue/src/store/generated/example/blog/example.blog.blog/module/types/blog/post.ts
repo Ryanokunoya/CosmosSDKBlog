@@ -1,6 +1,7 @@
 /* eslint-disable */
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
 import { Comment } from "../blog/comment";
-import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "example.blog.blog";
 
@@ -8,7 +9,7 @@ export const protobufPackage = "example.blog.blog";
 
 export interface Post {
   creator: string;
-  id: string;
+  id: number;
   title: string;
   body: string;
   comments: Comment[];
@@ -20,15 +21,15 @@ export interface MsgCreatePost {
   body: string;
 }
 
-const basePost: object = { creator: "", id: "", title: "", body: "" };
+const basePost: object = { creator: "", id: 0, title: "", body: "" };
 
 export const Post = {
   encode(message: Post, writer: Writer = Writer.create()): Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
     }
     if (message.title !== "") {
       writer.uint32(26).string(message.title);
@@ -54,7 +55,7 @@ export const Post = {
           message.creator = reader.string();
           break;
         case 2:
-          message.id = reader.string();
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
           message.title = reader.string();
@@ -82,9 +83,9 @@ export const Post = {
       message.creator = "";
     }
     if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
+      message.id = Number(object.id);
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.title !== undefined && object.title !== null) {
       message.title = String(object.title);
@@ -131,7 +132,7 @@ export const Post = {
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.title !== undefined && object.title !== null) {
       message.title = object.title;
@@ -241,6 +242,16 @@ export const MsgCreatePost = {
   },
 };
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -251,3 +262,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

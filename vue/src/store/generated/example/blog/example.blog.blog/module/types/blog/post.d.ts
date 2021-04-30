@@ -1,10 +1,10 @@
-import { Comment } from "../blog/comment";
 import { Writer, Reader } from "protobufjs/minimal";
+import { Comment } from "../blog/comment";
 export declare const protobufPackage = "example.blog.blog";
 /** proto/blog/post.proto */
 export interface Post {
     creator: string;
-    id: string;
+    id: number;
     title: string;
     body: string;
     comments: Comment[];

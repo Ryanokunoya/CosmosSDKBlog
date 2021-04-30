@@ -5,7 +5,7 @@ export const protobufPackage = "example.blog.blog";
 const baseMsgCreateComment = {
     creator: "",
     body: "",
-    id: "",
+    id: 0,
     postID: "",
     time: 0,
 };
@@ -17,8 +17,8 @@ export const MsgCreateComment = {
         if (message.body !== "") {
             writer.uint32(18).string(message.body);
         }
-        if (message.id !== "") {
-            writer.uint32(26).string(message.id);
+        if (message.id !== 0) {
+            writer.uint32(24).uint64(message.id);
         }
         if (message.postID !== "") {
             writer.uint32(34).string(message.postID);
@@ -42,7 +42,7 @@ export const MsgCreateComment = {
                     message.body = reader.string();
                     break;
                 case 3:
-                    message.id = reader.string();
+                    message.id = longToNumber(reader.uint64());
                     break;
                 case 4:
                     message.postID = reader.string();
@@ -72,10 +72,10 @@ export const MsgCreateComment = {
             message.body = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = String(object.id);
+            message.id = Number(object.id);
         }
         else {
-            message.id = "";
+            message.id = 0;
         }
         if (object.postID !== undefined && object.postID !== null) {
             message.postID = String(object.postID);
@@ -118,7 +118,7 @@ export const MsgCreateComment = {
             message.id = object.id;
         }
         else {
-            message.id = "";
+            message.id = 0;
         }
         if (object.postID !== undefined && object.postID !== null) {
             message.postID = object.postID;

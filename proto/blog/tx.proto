@@ -17,7 +17,7 @@ service Msg {
 message MsgCreateComment {
   string creator = 1;
   string body = 2;
-  string id = 3;
+  uint64 id = 3;
   string postID = 4;
   uint64 time = 5; 
 }

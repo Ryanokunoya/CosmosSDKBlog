@@ -46,7 +46,7 @@ message QueryAllCommentResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 message QueryGetPostRequest {
-	string id = 1;
+	uint64 id = 1;
 }
 
 message QueryGetPostResponse {

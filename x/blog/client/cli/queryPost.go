@@ -3,6 +3,7 @@ package cli
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -58,9 +59,10 @@ func CmdShowPost() *cobra.Command {
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
+			id, err := strconv.ParseUint(args[0], 10, 64)
 
 			params := &types.QueryGetPostRequest{
-				Id: args[0],
+				Id: id,
 			}
 
 			res, err := queryClient.Post(context.Background(), params)

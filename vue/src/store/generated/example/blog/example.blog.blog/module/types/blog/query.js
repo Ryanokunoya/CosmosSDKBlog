@@ -255,11 +255,11 @@ export const QueryAllCommentResponse = {
         return message;
     },
 };
-const baseQueryGetPostRequest = { id: "" };
+const baseQueryGetPostRequest = { id: 0 };
 export const QueryGetPostRequest = {
     encode(message, writer = Writer.create()) {
-        if (message.id !== "") {
-            writer.uint32(10).string(message.id);
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
         }
         return writer;
     },
@@ -271,7 +271,7 @@ export const QueryGetPostRequest = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.id = reader.string();
+                    message.id = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -283,10 +283,10 @@ export const QueryGetPostRequest = {
     fromJSON(object) {
         const message = { ...baseQueryGetPostRequest };
         if (object.id !== undefined && object.id !== null) {
-            message.id = String(object.id);
+            message.id = Number(object.id);
         }
         else {
-            message.id = "";
+            message.id = 0;
         }
         return message;
     },
@@ -301,7 +301,7 @@ export const QueryGetPostRequest = {
             message.id = object.id;
         }
         else {
-            message.id = "";
+            message.id = 0;
         }
         return message;
     },

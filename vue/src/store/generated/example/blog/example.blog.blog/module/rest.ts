@@ -29,6 +29,8 @@ export type BlogMsgUpdateCommentResponse = object;
 
 export interface BlogPost {
   creator?: string;
+
+  /** @format uint64 */
   id?: string;
   title?: string;
   body?: string;

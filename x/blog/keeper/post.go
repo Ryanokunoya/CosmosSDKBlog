@@ -2,6 +2,7 @@
 package keeper
 
 import (
+	"encoding/binary"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -11,7 +12,7 @@ import (
 )
 
 // GetPostCount get the total number of post
-func (k Keeper) GetPostCount(ctx sdk.Context) int64 {
+func (k Keeper) GetPostCount(ctx sdk.Context) uint64 {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostCountKey))
 	byteKey := blogTypes.KeyPrefix(blogTypes.PostCountKey)
 	bz := store.Get(byteKey)
@@ -22,7 +23,7 @@ func (k Keeper) GetPostCount(ctx sdk.Context) int64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseInt(string(bz), 10, 64)
+	count, err := strconv.ParseUint(string(bz), 10, 64)
 	if err != nil {
 		// Panic because the count should be always formattable to int64
 		panic("cannot decode count")
@@ -32,30 +33,30 @@ func (k Keeper) GetPostCount(ctx sdk.Context) int64 {
 }
 
 // SetPostCount set the total number of post
-func (k Keeper) SetPostCount(ctx sdk.Context, count int64) {
+func (k Keeper) SetPostCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostCountKey))
 	byteKey := blogTypes.KeyPrefix(blogTypes.PostCountKey)
-	bz := []byte(strconv.FormatInt(count, 10))
+	bz := []byte(strconv.FormatUint(count, 10))
 	store.Set(byteKey, bz)
 }
 
-func (k Keeper) CreatePost(ctx sdk.Context, msg blogTypes.MsgCreatePost) {
+func (k Keeper) CreatePost(ctx sdk.Context, msg blogTypes.MsgCreatePost) uint64 {
 	// Create the post
 	count := k.GetPostCount(ctx)
 	var post = blogTypes.Post{
 		Creator: msg.Creator,
-		Id:      strconv.FormatInt(count, 10),
+		Id:      count,
 		Title:   msg.Title,
 		Body:    msg.Body,
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
-	key := blogTypes.KeyPrefix(blogTypes.PostKey + post.Id)
 	value := k.cdc.MustMarshalBinaryBare(&post)
-	store.Set(key, value)
+	store.Set(GetPostIDBytes(post.Id), value)
 
 	// Update post count
 	k.SetPostCount(ctx, count+1)
+	return count
 }
 
 func (k Keeper) GetPost(ctx sdk.Context, key string) blogTypes.Post {
@@ -65,9 +66,9 @@ func (k Keeper) GetPost(ctx sdk.Context, key string) blogTypes.Post {
 	return post
 }
 
-func (k Keeper) HasPost(ctx sdk.Context, id string) bool {
+func (k Keeper) HasPost(ctx sdk.Context, id uint64) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), blogTypes.KeyPrefix(blogTypes.PostKey))
-	return store.Has(blogTypes.KeyPrefix(blogTypes.PostKey + id))
+	return store.Has(GetPostIDBytes(id))
 }
 
 func (k Keeper) GetPostOwner(ctx sdk.Context, key string) string {
@@ -87,4 +88,10 @@ func (k Keeper) GetAllPost(ctx sdk.Context) (msgs []blogTypes.Post) {
 	}
 
 	return
+}
+
+func GetPostIDBytes(id uint64) []byte {
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+	return bz
 }

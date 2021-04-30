@@ -19,7 +19,7 @@ export interface QueryAllCommentResponse {
     pagination: PageResponse | undefined;
 }
 export interface QueryGetPostRequest {
-    id: string;
+    id: number;
 }
 export interface QueryGetPostResponse {
     Post: Post | undefined;
