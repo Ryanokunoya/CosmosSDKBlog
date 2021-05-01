@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Comment } from "../blog/comment";
+import { CommentInPost } from "../blog/post";
 
 export const protobufPackage = "example.blog.blog";
 
@@ -10,7 +10,7 @@ export interface MsgCreateComment {
   creator: string;
   body: string;
   id: number;
-  postID: string;
+  postID: number;
   time: number;
 }
 
@@ -22,7 +22,7 @@ export interface MsgUpdateComment {
   creator: string;
   id: number;
   body: string;
-  postID: string;
+  postID: number;
 }
 
 export interface MsgUpdateCommentResponse {}
@@ -38,7 +38,8 @@ export interface MsgCreatePost {
   creator: string;
   title: string;
   body: string;
-  comment: Comment[];
+  /** repeated uint64 commentIds = 4; */
+  comment: CommentInPost[];
 }
 
 export interface MsgCreatePostResponse {
@@ -65,7 +66,7 @@ const baseMsgCreateComment: object = {
   creator: "",
   body: "",
   id: 0,
-  postID: "",
+  postID: 0,
   time: 0,
 };
 
@@ -80,8 +81,8 @@ export const MsgCreateComment = {
     if (message.id !== 0) {
       writer.uint32(24).uint64(message.id);
     }
-    if (message.postID !== "") {
-      writer.uint32(34).string(message.postID);
+    if (message.postID !== 0) {
+      writer.uint32(32).uint64(message.postID);
     }
     if (message.time !== 0) {
       writer.uint32(40).uint64(message.time);
@@ -106,7 +107,7 @@ export const MsgCreateComment = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 4:
-          message.postID = reader.string();
+          message.postID = longToNumber(reader.uint64() as Long);
           break;
         case 5:
           message.time = longToNumber(reader.uint64() as Long);
@@ -137,9 +138,9 @@ export const MsgCreateComment = {
       message.id = 0;
     }
     if (object.postID !== undefined && object.postID !== null) {
-      message.postID = String(object.postID);
+      message.postID = Number(object.postID);
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     if (object.time !== undefined && object.time !== null) {
       message.time = Number(object.time);
@@ -179,7 +180,7 @@ export const MsgCreateComment = {
     if (object.postID !== undefined && object.postID !== null) {
       message.postID = object.postID;
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     if (object.time !== undefined && object.time !== null) {
       message.time = object.time;
@@ -263,7 +264,7 @@ const baseMsgUpdateComment: object = {
   creator: "",
   id: 0,
   body: "",
-  postID: "",
+  postID: 0,
 };
 
 export const MsgUpdateComment = {
@@ -277,8 +278,8 @@ export const MsgUpdateComment = {
     if (message.body !== "") {
       writer.uint32(26).string(message.body);
     }
-    if (message.postID !== "") {
-      writer.uint32(34).string(message.postID);
+    if (message.postID !== 0) {
+      writer.uint32(32).uint64(message.postID);
     }
     return writer;
   },
@@ -300,7 +301,7 @@ export const MsgUpdateComment = {
           message.body = reader.string();
           break;
         case 4:
-          message.postID = reader.string();
+          message.postID = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -328,9 +329,9 @@ export const MsgUpdateComment = {
       message.body = "";
     }
     if (object.postID !== undefined && object.postID !== null) {
-      message.postID = String(object.postID);
+      message.postID = Number(object.postID);
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     return message;
   },
@@ -364,7 +365,7 @@ export const MsgUpdateComment = {
     if (object.postID !== undefined && object.postID !== null) {
       message.postID = object.postID;
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     return message;
   },
@@ -560,7 +561,7 @@ export const MsgCreatePost = {
       writer.uint32(26).string(message.body);
     }
     for (const v of message.comment) {
-      Comment.encode(v!, writer.uint32(34).fork()).ldelim();
+      CommentInPost.encode(v!, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -582,8 +583,8 @@ export const MsgCreatePost = {
         case 3:
           message.body = reader.string();
           break;
-        case 4:
-          message.comment.push(Comment.decode(reader, reader.uint32()));
+        case 5:
+          message.comment.push(CommentInPost.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -613,7 +614,7 @@ export const MsgCreatePost = {
     }
     if (object.comment !== undefined && object.comment !== null) {
       for (const e of object.comment) {
-        message.comment.push(Comment.fromJSON(e));
+        message.comment.push(CommentInPost.fromJSON(e));
       }
     }
     return message;
@@ -626,7 +627,7 @@ export const MsgCreatePost = {
     message.body !== undefined && (obj.body = message.body);
     if (message.comment) {
       obj.comment = message.comment.map((e) =>
-        e ? Comment.toJSON(e) : undefined
+        e ? CommentInPost.toJSON(e) : undefined
       );
     } else {
       obj.comment = [];
@@ -654,7 +655,7 @@ export const MsgCreatePost = {
     }
     if (object.comment !== undefined && object.comment !== null) {
       for (const e of object.comment) {
-        message.comment.push(Comment.fromPartial(e));
+        message.comment.push(CommentInPost.fromPartial(e));
       }
     }
     return message;

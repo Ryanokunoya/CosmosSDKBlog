@@ -6,7 +6,7 @@ import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
-import { Post } from "../blog/post";
+import { Post, CommentInPost } from "../blog/post";
 
 export const protobufPackage = "example.blog.blog";
 
@@ -22,7 +22,7 @@ export interface QueryGetCommentResponse {
 }
 
 export interface QueryAllCommentRequest {
-  postID: string;
+  postID: number;
   pagination: PageRequest | undefined;
 }
 
@@ -37,6 +37,7 @@ export interface QueryGetPostRequest {
 
 export interface QueryGetPostResponse {
   Post: Post | undefined;
+  comment: CommentInPost[];
 }
 
 export interface QueryAllPostRequest {
@@ -177,15 +178,15 @@ export const QueryGetCommentResponse = {
   },
 };
 
-const baseQueryAllCommentRequest: object = { postID: "" };
+const baseQueryAllCommentRequest: object = { postID: 0 };
 
 export const QueryAllCommentRequest = {
   encode(
     message: QueryAllCommentRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.postID !== "") {
-      writer.uint32(10).string(message.postID);
+    if (message.postID !== 0) {
+      writer.uint32(8).uint64(message.postID);
     }
     if (message.pagination !== undefined) {
       PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
@@ -201,7 +202,7 @@ export const QueryAllCommentRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.postID = reader.string();
+          message.postID = longToNumber(reader.uint64() as Long);
           break;
         case 2:
           message.pagination = PageRequest.decode(reader, reader.uint32());
@@ -217,9 +218,9 @@ export const QueryAllCommentRequest = {
   fromJSON(object: any): QueryAllCommentRequest {
     const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
     if (object.postID !== undefined && object.postID !== null) {
-      message.postID = String(object.postID);
+      message.postID = Number(object.postID);
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromJSON(object.pagination);
@@ -246,7 +247,7 @@ export const QueryAllCommentRequest = {
     if (object.postID !== undefined && object.postID !== null) {
       message.postID = object.postID;
     } else {
-      message.postID = "";
+      message.postID = 0;
     }
     if (object.pagination !== undefined && object.pagination !== null) {
       message.pagination = PageRequest.fromPartial(object.pagination);
@@ -423,6 +424,9 @@ export const QueryGetPostResponse = {
     if (message.Post !== undefined) {
       Post.encode(message.Post, writer.uint32(10).fork()).ldelim();
     }
+    for (const v of message.comment) {
+      CommentInPost.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -430,11 +434,15 @@ export const QueryGetPostResponse = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryGetPostResponse } as QueryGetPostResponse;
+    message.comment = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
           message.Post = Post.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.comment.push(CommentInPost.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -446,10 +454,16 @@ export const QueryGetPostResponse = {
 
   fromJSON(object: any): QueryGetPostResponse {
     const message = { ...baseQueryGetPostResponse } as QueryGetPostResponse;
+    message.comment = [];
     if (object.Post !== undefined && object.Post !== null) {
       message.Post = Post.fromJSON(object.Post);
     } else {
       message.Post = undefined;
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      for (const e of object.comment) {
+        message.comment.push(CommentInPost.fromJSON(e));
+      }
     }
     return message;
   },
@@ -458,15 +472,28 @@ export const QueryGetPostResponse = {
     const obj: any = {};
     message.Post !== undefined &&
       (obj.Post = message.Post ? Post.toJSON(message.Post) : undefined);
+    if (message.comment) {
+      obj.comment = message.comment.map((e) =>
+        e ? CommentInPost.toJSON(e) : undefined
+      );
+    } else {
+      obj.comment = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryGetPostResponse>): QueryGetPostResponse {
     const message = { ...baseQueryGetPostResponse } as QueryGetPostResponse;
+    message.comment = [];
     if (object.Post !== undefined && object.Post !== null) {
       message.Post = Post.fromPartial(object.Post);
     } else {
       message.Post = undefined;
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      for (const e of object.comment) {
+        message.comment.push(CommentInPost.fromPartial(e));
+      }
     }
     return message;
   },

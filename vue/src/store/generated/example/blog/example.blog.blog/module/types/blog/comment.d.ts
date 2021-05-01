@@ -4,7 +4,7 @@ export interface Comment {
     creator: string;
     id: number;
     body: string;
-    postID: string;
+    postID: number;
 }
 export declare const Comment: {
     encode(message: Comment, writer?: Writer): Writer;

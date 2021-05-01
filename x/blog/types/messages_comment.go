@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateComment{}
 
-func NewMsgCreateComment(creator string, body string, postID string) *MsgCreateComment {
+func NewMsgCreateComment(creator string, body string, postID uint64) *MsgCreateComment {
 	return &MsgCreateComment{
 		Creator: creator,
 		Body:    body,
@@ -46,7 +46,7 @@ func (msg *MsgCreateComment) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateComment{}
 
-func NewMsgUpdateComment(creator string, id uint64, body string, postID string) *MsgUpdateComment {
+func NewMsgUpdateComment(creator string, id uint64, body string, postID uint64) *MsgUpdateComment {
 	return &MsgUpdateComment{
 		Id:      id,
 		Creator: creator,

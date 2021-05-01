@@ -4,20 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
-    "github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/example/blog/x/blog/types"
-    "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 )
 
 type createCommentRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	Body string `json:"body"`
-	PostID string `json:"postID"`
-	
+	Creator string       `json:"creator"`
+	Body    string       `json:"body"`
+	PostID  uint64       `json:"postID"`
 }
 
 func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
@@ -39,17 +38,14 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		
 		parsedBody := req.Body
-		
+
 		parsedPostID := req.PostID
-		
 
 		msg := types.NewMsgCreateComment(
 			req.Creator,
 			parsedBody,
 			parsedPostID,
-			
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
@@ -58,19 +54,17 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 
 type updateCommentRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	Body string `json:"body"`
-	PostID string `json:"postID"`
-	
+	Creator string       `json:"creator"`
+	Body    string       `json:"body"`
+	PostID  uint64       `json:"postID"`
 }
-
 
 func updateCommentHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-        id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-        if err != nil {
-            return
-        }
+		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+		if err != nil {
+			return
+		}
 
 		var req updateCommentRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
@@ -89,18 +83,15 @@ func updateCommentHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		
 		parsedBody := req.Body
-		
+
 		parsedPostID := req.PostID
-		
 
 		msg := types.NewMsgUpdateComment(
 			req.Creator,
-            id,
+			id,
 			parsedBody,
 			parsedPostID,
-			
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
@@ -109,15 +100,15 @@ func updateCommentHandler(clientCtx client.Context) http.HandlerFunc {
 
 type deleteCommentRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
+	Creator string       `json:"creator"`
 }
 
 func deleteCommentHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-        id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-        if err != nil {
-            return
-        }
+		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+		if err != nil {
+			return
+		}
 
 		var req deleteCommentRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
@@ -138,7 +129,7 @@ func deleteCommentHandler(clientCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgDeleteComment(
 			req.Creator,
-            id,
+			id,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

@@ -59,7 +59,10 @@ func CmdShowPost() *cobra.Command {
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err1 := strconv.ParseUint(args[0], 10, 64)
+			if err1 != nil {
+				return err1
+			}
 
 			params := &types.QueryGetPostRequest{
 				Id: id,

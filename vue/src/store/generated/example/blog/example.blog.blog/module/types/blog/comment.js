@@ -2,7 +2,7 @@
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "example.blog.blog";
-const baseComment = { creator: "", id: 0, body: "", postID: "" };
+const baseComment = { creator: "", id: 0, body: "", postID: 0 };
 export const Comment = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
@@ -14,8 +14,8 @@ export const Comment = {
         if (message.body !== "") {
             writer.uint32(26).string(message.body);
         }
-        if (message.postID !== "") {
-            writer.uint32(34).string(message.postID);
+        if (message.postID !== 0) {
+            writer.uint32(32).uint64(message.postID);
         }
         return writer;
     },
@@ -36,7 +36,7 @@ export const Comment = {
                     message.body = reader.string();
                     break;
                 case 4:
-                    message.postID = reader.string();
+                    message.postID = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -66,10 +66,10 @@ export const Comment = {
             message.body = "";
         }
         if (object.postID !== undefined && object.postID !== null) {
-            message.postID = String(object.postID);
+            message.postID = Number(object.postID);
         }
         else {
-            message.postID = "";
+            message.postID = 0;
         }
         return message;
     },
@@ -105,7 +105,7 @@ export const Comment = {
             message.postID = object.postID;
         }
         else {
-            message.postID = "";
+            message.postID = 0;
         }
         return message;
     },

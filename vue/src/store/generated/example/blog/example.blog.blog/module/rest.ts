@@ -15,7 +15,14 @@ export interface BlogComment {
   /** @format uint64 */
   id?: string;
   body?: string;
+
+  /** @format uint64 */
   postID?: string;
+}
+
+export interface BlogCommentInPost {
+  creator?: string;
+  body?: string;
 }
 
 export interface BlogMsgCreateCommentResponse {
@@ -43,7 +50,7 @@ export interface BlogPost {
   id?: string;
   title?: string;
   body?: string;
-  comments?: BlogComment[];
+  comments?: BlogCommentInPost[];
 }
 
 export interface BlogQueryAllCommentResponse {
@@ -82,6 +89,7 @@ export interface BlogQueryGetCommentResponse {
 
 export interface BlogQueryGetPostResponse {
   Post?: BlogPost;
+  comment?: BlogCommentInPost[];
 }
 
 export interface ProtobufAny {

@@ -19,13 +19,17 @@ func CmdCreateComment() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsBody := string(args[0])
 			argsPostID := string(args[1])
+			s, err1 := strconv.ParseUint(argsPostID, 10, 64)
+			if err1 != nil {
+				return err1
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), string(argsBody), string(argsPostID))
+			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), string(argsBody), s)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -51,13 +55,17 @@ func CmdUpdateComment() *cobra.Command {
 
 			argsBody := string(args[1])
 			argsPostID := string(args[2])
+			a, err1 := strconv.ParseUint(argsPostID, 10, 64)
+			if err1 != nil {
+				return err1
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateComment(clientCtx.GetFromAddress().String(), id, string(argsBody), string(argsPostID))
+			msg := types.NewMsgUpdateComment(clientCtx.GetFromAddress().String(), id, string(argsBody), a)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

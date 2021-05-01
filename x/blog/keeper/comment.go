@@ -41,9 +41,10 @@ func (k Keeper) SetCommentCount(ctx sdk.Context, count uint64) {
 // AppendComment appends a comment in the store with a new id and update the count
 func (k Keeper) AppendComment(
 	ctx sdk.Context,
+	id uint64,
 	creator string,
 	body string,
-	postID string,
+	postID uint64,
 ) uint64 {
 	// Create the comment
 	count := k.GetCommentCount(ctx)
@@ -57,6 +58,37 @@ func (k Keeper) AppendComment(
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
 	value := k.cdc.MustMarshalBinaryBare(&comment)
 	store.Set(GetCommentIDBytes(comment.Id), value)
+
+	//commentIDs := k.GetPost(ctx, comment.PostID).CommentIds
+	//commentIDs = append(commentIDs, comment.Id)
+	creator_post := k.GetPost(ctx, comment.PostID).Creator
+	Title_post := k.GetPost(ctx, comment.PostID).Title
+	Body_post := k.GetPost(ctx, comment.PostID).Body
+	commentInPost := k.GetPost(ctx, comment.PostID).Comments
+
+	var new_commentInPost = types.CommentInPost{
+		Creator: creator,
+		Body:    body,
+	}
+	commentInPost = append(commentInPost, &new_commentInPost)
+
+	var post = types.Post{
+		Creator: creator_post,
+		Id:      postID,
+		Title:   Title_post,
+		Body:    Body_post,
+		//CommentIds: commentIDs,
+		Comments: commentInPost,
+	}
+	//if creator_post == creator {
+	//	fmt.Println("You cannot comment yourself!")
+	//	os.Exit(0)
+
+	//}
+
+	store_post := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PostKey))
+	value_post := k.cdc.MustMarshalBinaryBare(&post)
+	store_post.Set(GetCommentIDBytes(comment.PostID), value_post)
 
 	// Update comment count
 	k.SetCommentCount(ctx, count+1)

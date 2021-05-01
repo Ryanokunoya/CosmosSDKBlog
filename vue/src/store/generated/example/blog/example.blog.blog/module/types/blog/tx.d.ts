@@ -1,12 +1,12 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Comment } from "../blog/comment";
+import { CommentInPost } from "../blog/post";
 export declare const protobufPackage = "example.blog.blog";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateComment {
     creator: string;
     body: string;
     id: number;
-    postID: string;
+    postID: number;
     time: number;
 }
 export interface MsgCreateCommentResponse {
@@ -16,7 +16,7 @@ export interface MsgUpdateComment {
     creator: string;
     id: number;
     body: string;
-    postID: string;
+    postID: number;
 }
 export interface MsgUpdateCommentResponse {
 }
@@ -30,7 +30,8 @@ export interface MsgCreatePost {
     creator: string;
     title: string;
     body: string;
-    comment: Comment[];
+    /** repeated uint64 commentIds = 4; */
+    comment: CommentInPost[];
 }
 export interface MsgCreatePostResponse {
     id: number;

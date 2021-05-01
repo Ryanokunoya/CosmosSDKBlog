@@ -1,7 +1,8 @@
 package keeper
 
 import (
-    "strconv"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -20,13 +21,13 @@ func listComment(ctx sdk.Context, keeper Keeper, legacyQuerierCdc *codec.LegacyA
 
 func getComment(ctx sdk.Context, key string, keeper Keeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
 	id, err := strconv.ParseUint(key, 10, 64)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    if !keeper.HasComment(ctx, id) {
-        return nil, sdkerrors.ErrKeyNotFound
-    }
+	if !keeper.HasComment(ctx, id) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
 
 	msg := keeper.GetComment(ctx, id)
 

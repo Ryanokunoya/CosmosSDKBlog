@@ -1,7 +1,7 @@
 import { Reader, Writer } from "protobufjs/minimal";
 import { Comment } from "../blog/comment";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
-import { Post } from "../blog/post";
+import { Post, CommentInPost } from "../blog/post";
 export declare const protobufPackage = "example.blog.blog";
 /** proto/blog/query.proto */
 /** this line is used by starport scaffolding # 3 */
@@ -12,7 +12,7 @@ export interface QueryGetCommentResponse {
     Comment: Comment | undefined;
 }
 export interface QueryAllCommentRequest {
-    postID: string;
+    postID: number;
     pagination: PageRequest | undefined;
 }
 export interface QueryAllCommentResponse {
@@ -24,6 +24,7 @@ export interface QueryGetPostRequest {
 }
 export interface QueryGetPostResponse {
     Post: Post | undefined;
+    comment: CommentInPost[];
 }
 export interface QueryAllPostRequest {
     pagination: PageRequest | undefined;

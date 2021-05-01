@@ -38,7 +38,7 @@ message QueryGetCommentResponse {
 }
 
 message QueryAllCommentRequest {
-	string postID = 1;
+	uint64 postID = 1;
 	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
@@ -52,6 +52,7 @@ message QueryGetPostRequest {
 
 message QueryGetPostResponse {
 	Post Post = 1;
+	repeated CommentInPost comment = 2;
 }
 
 message QueryAllPostRequest {

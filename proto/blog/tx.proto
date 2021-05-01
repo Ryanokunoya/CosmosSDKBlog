@@ -3,6 +3,8 @@ package example.blog.blog;
 
 // this line is used by starport scaffolding # proto/tx/import
 import "blog/comment.proto";
+import "blog/post.proto";
+
 option go_package = "github.com/example/blog/x/blog/types";
 
 // Msg defines the Msg service.
@@ -16,12 +18,13 @@ service Msg {
   rpc DeletePost(MsgDeletePost) returns (MsgDeletePostResponse);
 }
 
+
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateComment {
   string creator = 1;
   string body = 2;
   uint64 id = 3;
-  string postID = 4;
+  uint64 postID = 4;
   uint64 time = 5; 
 }
 
@@ -33,7 +36,7 @@ message MsgUpdateComment {
   string creator = 1;
   uint64 id = 2;
   string body = 3;
-  string postID = 4;
+  uint64 postID = 4;
 }
 
 message MsgUpdateCommentResponse { }
@@ -49,7 +52,8 @@ message MsgCreatePost {
   string creator = 1;
   string title = 2; 
   string body = 3; 
-  repeated Comment comment = 4;
+  //repeated uint64 commentIds = 4;
+  repeated CommentInPost comment = 5;
 }
 
 message MsgCreatePostResponse {

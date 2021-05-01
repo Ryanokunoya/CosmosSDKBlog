@@ -1,14 +1,25 @@
 import { Writer, Reader } from "protobufjs/minimal";
-import { Comment } from "../blog/comment";
 export declare const protobufPackage = "example.blog.blog";
 /** proto/blog/post.proto */
+export interface CommentInPost {
+    creator: string;
+    body: string;
+}
 export interface Post {
     creator: string;
     id: number;
     title: string;
     body: string;
-    comments: Comment[];
+    /** repeated uint64 commentIds = 5; */
+    comments: CommentInPost[];
 }
+export declare const CommentInPost: {
+    encode(message: CommentInPost, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): CommentInPost;
+    fromJSON(object: any): CommentInPost;
+    toJSON(message: CommentInPost): unknown;
+    fromPartial(object: DeepPartial<CommentInPost>): CommentInPost;
+};
 export declare const Post: {
     encode(message: Post, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Post;
