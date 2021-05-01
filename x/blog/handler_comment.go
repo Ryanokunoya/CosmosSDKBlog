@@ -8,7 +8,7 @@ import (
 )
 
 func handleMsgCreateComment(ctx sdk.Context, k keeper.Keeper, msg *types.MsgCreateComment) (*sdk.Result, error) {
-	k.AppendComment(ctx, msg.Id, msg.Creator, msg.Body, msg.PostID)
+	k.AppendComment(ctx, msg.Id, msg.Creator, msg.Body, msg.PostID, msg.Time)
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }

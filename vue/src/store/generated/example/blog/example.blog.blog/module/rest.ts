@@ -18,11 +18,13 @@ export interface BlogComment {
 
   /** @format uint64 */
   postID?: string;
+  time?: string;
 }
 
 export interface BlogCommentInPost {
   creator?: string;
   body?: string;
+  time?: string;
 }
 
 export interface BlogMsgCreateCommentResponse {

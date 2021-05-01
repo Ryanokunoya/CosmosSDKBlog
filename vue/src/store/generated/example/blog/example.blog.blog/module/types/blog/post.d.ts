@@ -4,6 +4,7 @@ export declare const protobufPackage = "example.blog.blog";
 export interface CommentInPost {
     creator: string;
     body: string;
+    time: string;
 }
 export interface Post {
     creator: string;

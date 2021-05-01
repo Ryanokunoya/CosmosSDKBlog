@@ -9,9 +9,16 @@ export interface Comment {
   id: number;
   body: string;
   postID: number;
+  time: string;
 }
 
-const baseComment: object = { creator: "", id: 0, body: "", postID: 0 };
+const baseComment: object = {
+  creator: "",
+  id: 0,
+  body: "",
+  postID: 0,
+  time: "",
+};
 
 export const Comment = {
   encode(message: Comment, writer: Writer = Writer.create()): Writer {
@@ -26,6 +33,9 @@ export const Comment = {
     }
     if (message.postID !== 0) {
       writer.uint32(32).uint64(message.postID);
+    }
+    if (message.time !== "") {
+      writer.uint32(42).string(message.time);
     }
     return writer;
   },
@@ -48,6 +58,9 @@ export const Comment = {
           break;
         case 4:
           message.postID = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.time = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -79,6 +92,11 @@ export const Comment = {
     } else {
       message.postID = 0;
     }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = String(object.time);
+    } else {
+      message.time = "";
+    }
     return message;
   },
 
@@ -88,6 +106,7 @@ export const Comment = {
     message.id !== undefined && (obj.id = message.id);
     message.body !== undefined && (obj.body = message.body);
     message.postID !== undefined && (obj.postID = message.postID);
+    message.time !== undefined && (obj.time = message.time);
     return obj;
   },
 
@@ -112,6 +131,11 @@ export const Comment = {
       message.postID = object.postID;
     } else {
       message.postID = 0;
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time;
+    } else {
+      message.time = "";
     }
     return message;
   },

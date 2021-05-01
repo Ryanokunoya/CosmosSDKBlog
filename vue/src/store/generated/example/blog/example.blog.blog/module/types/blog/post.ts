@@ -9,6 +9,7 @@ export const protobufPackage = "example.blog.blog";
 export interface CommentInPost {
   creator: string;
   body: string;
+  time: string;
 }
 
 export interface Post {
@@ -20,7 +21,7 @@ export interface Post {
   comments: CommentInPost[];
 }
 
-const baseCommentInPost: object = { creator: "", body: "" };
+const baseCommentInPost: object = { creator: "", body: "", time: "" };
 
 export const CommentInPost = {
   encode(message: CommentInPost, writer: Writer = Writer.create()): Writer {
@@ -29,6 +30,9 @@ export const CommentInPost = {
     }
     if (message.body !== "") {
       writer.uint32(18).string(message.body);
+    }
+    if (message.time !== "") {
+      writer.uint32(26).string(message.time);
     }
     return writer;
   },
@@ -45,6 +49,9 @@ export const CommentInPost = {
           break;
         case 2:
           message.body = reader.string();
+          break;
+        case 3:
+          message.time = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -66,6 +73,11 @@ export const CommentInPost = {
     } else {
       message.body = "";
     }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = String(object.time);
+    } else {
+      message.time = "";
+    }
     return message;
   },
 
@@ -73,6 +85,7 @@ export const CommentInPost = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.body !== undefined && (obj.body = message.body);
+    message.time !== undefined && (obj.time = message.time);
     return obj;
   },
 
@@ -87,6 +100,11 @@ export const CommentInPost = {
       message.body = object.body;
     } else {
       message.body = "";
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time;
+    } else {
+      message.time = "";
     }
     return message;
   },

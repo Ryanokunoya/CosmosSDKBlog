@@ -2,7 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	//"fmt"
 	"strconv"
+	"time"
+
+	//"github.com/gen2brain/beeep"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -45,14 +49,17 @@ func (k Keeper) AppendComment(
 	creator string,
 	body string,
 	postID uint64,
+	timee string,
 ) uint64 {
 	// Create the comment
 	count := k.GetCommentCount(ctx)
+	current_time := time.Now()
 	var comment = types.Comment{
 		Creator: creator,
 		Id:      count,
 		Body:    body,
 		PostID:  postID,
+		Time:    current_time.String(),
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
@@ -69,6 +76,7 @@ func (k Keeper) AppendComment(
 	var new_commentInPost = types.CommentInPost{
 		Creator: creator,
 		Body:    body,
+		Time:    current_time.String(),
 	}
 	commentInPost = append(commentInPost, &new_commentInPost)
 
@@ -81,9 +89,7 @@ func (k Keeper) AppendComment(
 		Comments: commentInPost,
 	}
 	//if creator_post == creator {
-	//	fmt.Println("You cannot comment yourself!")
-	//	os.Exit(0)
-
+	//
 	//}
 
 	store_post := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PostKey))

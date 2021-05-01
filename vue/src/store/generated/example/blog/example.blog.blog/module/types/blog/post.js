@@ -2,7 +2,7 @@
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "example.blog.blog";
-const baseCommentInPost = { creator: "", body: "" };
+const baseCommentInPost = { creator: "", body: "", time: "" };
 export const CommentInPost = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
@@ -10,6 +10,9 @@ export const CommentInPost = {
         }
         if (message.body !== "") {
             writer.uint32(18).string(message.body);
+        }
+        if (message.time !== "") {
+            writer.uint32(26).string(message.time);
         }
         return writer;
     },
@@ -25,6 +28,9 @@ export const CommentInPost = {
                     break;
                 case 2:
                     message.body = reader.string();
+                    break;
+                case 3:
+                    message.time = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -47,12 +53,19 @@ export const CommentInPost = {
         else {
             message.body = "";
         }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = String(object.time);
+        }
+        else {
+            message.time = "";
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.body !== undefined && (obj.body = message.body);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -68,6 +81,12 @@ export const CommentInPost = {
         }
         else {
             message.body = "";
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = "";
         }
         return message;
     },

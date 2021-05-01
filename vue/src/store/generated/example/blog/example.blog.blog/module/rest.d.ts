@@ -5,10 +5,12 @@ export interface BlogComment {
     body?: string;
     /** @format uint64 */
     postID?: string;
+    time?: string;
 }
 export interface BlogCommentInPost {
     creator?: string;
     body?: string;
+    time?: string;
 }
 export interface BlogMsgCreateCommentResponse {
     /** @format uint64 */

@@ -9,6 +9,7 @@ import "gogoproto/gogo.proto";
 message CommentInPost {
   string creator = 1;
   string body = 2;
+  string time = 3;
 }
 
 message Post {

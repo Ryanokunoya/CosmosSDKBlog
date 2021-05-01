@@ -11,7 +11,7 @@ export interface MsgCreateComment {
   body: string;
   id: number;
   postID: number;
-  time: number;
+  time: string;
 }
 
 export interface MsgCreateCommentResponse {
@@ -67,7 +67,7 @@ const baseMsgCreateComment: object = {
   body: "",
   id: 0,
   postID: 0,
-  time: 0,
+  time: "",
 };
 
 export const MsgCreateComment = {
@@ -84,8 +84,8 @@ export const MsgCreateComment = {
     if (message.postID !== 0) {
       writer.uint32(32).uint64(message.postID);
     }
-    if (message.time !== 0) {
-      writer.uint32(40).uint64(message.time);
+    if (message.time !== "") {
+      writer.uint32(42).string(message.time);
     }
     return writer;
   },
@@ -110,7 +110,7 @@ export const MsgCreateComment = {
           message.postID = longToNumber(reader.uint64() as Long);
           break;
         case 5:
-          message.time = longToNumber(reader.uint64() as Long);
+          message.time = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -143,9 +143,9 @@ export const MsgCreateComment = {
       message.postID = 0;
     }
     if (object.time !== undefined && object.time !== null) {
-      message.time = Number(object.time);
+      message.time = String(object.time);
     } else {
-      message.time = 0;
+      message.time = "";
     }
     return message;
   },
@@ -185,7 +185,7 @@ export const MsgCreateComment = {
     if (object.time !== undefined && object.time !== null) {
       message.time = object.time;
     } else {
-      message.time = 0;
+      message.time = "";
     }
     return message;
   },

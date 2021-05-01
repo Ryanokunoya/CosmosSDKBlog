@@ -25,7 +25,7 @@ message MsgCreateComment {
   string body = 2;
   uint64 id = 3;
   uint64 postID = 4;
-  uint64 time = 5; 
+  string time = 5; 
 }
 
 message MsgCreateCommentResponse {
