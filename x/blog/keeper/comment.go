@@ -105,6 +105,7 @@ func (k Keeper) AppendComment(
 		k.SetCommentCount(ctx, count+1)
 
 	}
+	time.Sleep(5 * time.Second)
 
 	return count
 
