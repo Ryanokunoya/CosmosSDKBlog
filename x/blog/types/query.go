@@ -1,7 +1,7 @@
 package types
 
 const (
-	QueryGetPost  = "get-post"
+	QueryGetPost  = "show-post"
 	QueryListPost = "list-post"
 )
 

@@ -11,6 +11,7 @@ import (
 	"github.com/example/blog/x/blog/types"
 )
 
+// CmdCreatePost() returns create-post trasaction for this module
 func CmdCreatePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-post [title] [body]",
@@ -38,6 +39,7 @@ func CmdCreatePost() *cobra.Command {
 	return cmd
 }
 
+// CmdUpdatePost() returns update-post trasaction for this module
 func CmdUpdatePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-post [id] [title] [body]",
@@ -70,6 +72,7 @@ func CmdUpdatePost() *cobra.Command {
 	return cmd
 }
 
+// CmdDeletePost() returns delete-post trasaction for this module
 func CmdDeletePost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-post [id]",

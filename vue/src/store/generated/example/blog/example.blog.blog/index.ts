@@ -2,9 +2,9 @@ import { txClient, queryClient } from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
+import { Comment } from "./module/types/blog/comment"
 import { CommentInPost } from "./module/types/blog/post"
 import { Post } from "./module/types/blog/post"
-import { Comment } from "./module/types/blog/comment"
 
 
 async function initTxClient(vuexGetters) {
@@ -38,9 +38,9 @@ const getDefaultState = () => {
         PostAll: {},
         
         _Structure: {
+            Comment: getStructure(Comment.fromPartial({})),
             CommentInPost: getStructure(CommentInPost.fromPartial({})),
             Post: getStructure(Post.fromPartial({})),
-            Comment: getStructure(Comment.fromPartial({})),
             
 		},
 		_Subscriptions: new Set(),
@@ -192,31 +192,17 @@ export default {
 			}
 		},
 		
-		async sendMsgCreatePost({ rootGetters }, { value, fee, memo }) {
+		async sendMsgDeleteComment({ rootGetters }, { value, fee, memo }) {
 			try {
-				const msg = await (await initTxClient(rootGetters)).msgCreatePost(value)
+				const msg = await (await initTxClient(rootGetters)).msgDeleteComment(value)
 				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
   gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgCreatePost:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgDeleteComment:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCreatePost:Send', 'Could not broadcast Tx.')
-				}
-			}
-		},
-		async sendMsgUpdatePost({ rootGetters }, { value, fee, memo }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgUpdatePost(value)
-				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
-  gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgUpdatePost:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgUpdatePost:Send', 'Could not broadcast Tx.')
+					throw new SpVuexError('TxClient:MsgDeleteComment:Send', 'Could not broadcast Tx.')
 				}
 			}
 		},
@@ -234,20 +220,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgDeleteComment({ rootGetters }, { value, fee, memo }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgDeleteComment(value)
-				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
-  gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgDeleteComment:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgDeleteComment:Send', 'Could not broadcast Tx.')
-				}
-			}
-		},
 		async sendMsgUpdateComment({ rootGetters }, { value, fee, memo }) {
 			try {
 				const msg = await (await initTxClient(rootGetters)).msgUpdateComment(value)
@@ -259,6 +231,34 @@ export default {
 					throw new SpVuexError('TxClient:MsgUpdateComment:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgUpdateComment:Send', 'Could not broadcast Tx.')
+				}
+			}
+		},
+		async sendMsgUpdatePost({ rootGetters }, { value, fee, memo }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgUpdatePost(value)
+				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
+  gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgUpdatePost:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgUpdatePost:Send', 'Could not broadcast Tx.')
+				}
+			}
+		},
+		async sendMsgCreatePost({ rootGetters }, { value, fee, memo }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgCreatePost(value)
+				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
+  gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgCreatePost:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgCreatePost:Send', 'Could not broadcast Tx.')
 				}
 			}
 		},
@@ -277,27 +277,15 @@ export default {
 			}
 		},
 		
-		async MsgCreatePost({ rootGetters }, { value }) {
+		async MsgDeleteComment({ rootGetters }, { value }) {
 			try {
-				const msg = await (await initTxClient(rootGetters)).msgCreatePost(value)
+				const msg = await (await initTxClient(rootGetters)).msgDeleteComment(value)
 				return msg
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgCreatePost:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgDeleteComment:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCreatePost:Create', 'Could not create message.')
-				}
-			}
-		},
-		async MsgUpdatePost({ rootGetters }, { value }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgUpdatePost(value)
-				return msg
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgUpdatePost:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgUpdatePost:Create', 'Could not create message.')
+					throw new SpVuexError('TxClient:MsgDeleteComment:Create', 'Could not create message.')
 				}
 			}
 		},
@@ -313,18 +301,6 @@ export default {
 				}
 			}
 		},
-		async MsgDeleteComment({ rootGetters }, { value }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgDeleteComment(value)
-				return msg
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgDeleteComment:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgDeleteComment:Create', 'Could not create message.')
-				}
-			}
-		},
 		async MsgUpdateComment({ rootGetters }, { value }) {
 			try {
 				const msg = await (await initTxClient(rootGetters)).msgUpdateComment(value)
@@ -334,6 +310,30 @@ export default {
 					throw new SpVuexError('TxClient:MsgUpdateComment:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgUpdateComment:Create', 'Could not create message.')
+				}
+			}
+		},
+		async MsgUpdatePost({ rootGetters }, { value }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgUpdatePost(value)
+				return msg
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgUpdatePost:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgUpdatePost:Create', 'Could not create message.')
+				}
+			}
+		},
+		async MsgCreatePost({ rootGetters }, { value }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgCreatePost(value)
+				return msg
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgCreatePost:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgCreatePost:Create', 'Could not create message.')
 				}
 			}
 		},

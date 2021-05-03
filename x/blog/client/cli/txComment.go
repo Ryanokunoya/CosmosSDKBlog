@@ -11,6 +11,7 @@ import (
 	"github.com/example/blog/x/blog/types"
 )
 
+// CmdCreateComment() returns create-comment trasaction for this module
 func CmdCreateComment() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-comment [body] [postID]",
@@ -43,6 +44,7 @@ func CmdCreateComment() *cobra.Command {
 	return cmd
 }
 
+// CmdUpdateComment() returns update-comment trasaction for this module
 func CmdUpdateComment() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-comment [id] [body] [postID]",
@@ -79,6 +81,7 @@ func CmdUpdateComment() *cobra.Command {
 	return cmd
 }
 
+// CmdDeleteComment() returns delete-comment trasaction for this module
 func CmdDeleteComment() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-comment [id]",

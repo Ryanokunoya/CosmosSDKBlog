@@ -12,6 +12,7 @@ import (
 	"github.com/example/blog/x/blog/types"
 )
 
+//CmdListPost() query the result of list all post
 func CmdListPost() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-post",
