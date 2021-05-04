@@ -6,6 +6,8 @@ import (
 	"math"
 	"time"
 
+	"github.com/gen2brain/beeep"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/example/blog/x/blog/types"
@@ -15,7 +17,10 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	current_time := time.Now().Unix()
 	last_blockTime := ctx.BlockTime().Unix()
-	if math.Abs(float64(last_blockTime-current_time)) <= 5 {
+	creator_post := k.GetPost(ctx, msg.PostID).Creator
+	// if comment time is within ctx.BlockTime() - 5 seconds and ctx.BlockTime() + 5 seconds, and comment creator is not the post creator
+	// comment is valid
+	if math.Abs(float64(last_blockTime-current_time)) <= 5 && creator_post != msg.Creator {
 		id := k.AppendComment(
 			ctx,
 			msg.Id,
@@ -30,6 +35,10 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		}, nil
 
 	} else {
+		err := beeep.Alert("Alert!", "You cannot comment yourself", "warning.png")
+		if err != nil {
+			panic(err)
+		}
 		return nil, nil
 	}
 

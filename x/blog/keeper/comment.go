@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gen2brain/beeep"
+	//"github.com/gen2brain/beeep"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -95,22 +95,12 @@ func (k Keeper) AppendComment(
 		Comments: commentInPost,
 	}
 
-	// if the comment creator is the blog creator, an alert will show up in screen and the comment will not be stored in KV store
-	if creator_post == creator {
-		err := beeep.Alert("Alert!", "You cannot comment yourself", "warning.png")
-		if err != nil {
-			panic(err)
-		}
+	store_post := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PostKey))
+	value_post := k.cdc.MustMarshalBinaryBare(&post)
+	store_post.Set(GetCommentIDBytes(comment.PostID), value_post)
 
-	} else {
-		store_post := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PostKey))
-		value_post := k.cdc.MustMarshalBinaryBare(&post)
-		store_post.Set(GetCommentIDBytes(comment.PostID), value_post)
-
-		// Update comment count
-		k.SetCommentCount(ctx, count+1)
-
-	}
+	// Update comment count
+	k.SetCommentCount(ctx, count+1)
 
 	return count
 
