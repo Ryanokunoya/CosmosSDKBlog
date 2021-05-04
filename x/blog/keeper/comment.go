@@ -44,7 +44,7 @@ func (k Keeper) SetCommentCount(ctx sdk.Context, count uint64) {
 	store.Set(byteKey, bz)
 }
 
-// AppendComment appends a comment in the store with a new id and update the count
+// AppendComment appends a comment in the store with a new id and update the count, it also appends a comment to the post list directly
 func (k Keeper) AppendComment(
 	ctx sdk.Context,
 	id uint64,
@@ -70,11 +70,14 @@ func (k Keeper) AppendComment(
 
 	//commentIDs := k.GetPost(ctx, comment.PostID).CommentIds
 	//commentIDs = append(commentIDs, comment.Id)
+
+	//fetch the the post with the corresponding postID
 	creator_post := k.GetPost(ctx, comment.PostID).Creator
 	Title_post := k.GetPost(ctx, comment.PostID).Title
 	Body_post := k.GetPost(ctx, comment.PostID).Body
 	commentInPost := k.GetPost(ctx, comment.PostID).Comments
 
+	// create the comment that will show up in the post
 	var new_commentInPost = types.CommentInPost{
 		Creator: creator,
 		Body:    body,
@@ -82,6 +85,7 @@ func (k Keeper) AppendComment(
 	}
 	commentInPost = append(commentInPost, &new_commentInPost)
 
+	// create a new post by adding the comment to it
 	var post = types.Post{
 		Creator: creator_post,
 		Id:      postID,
@@ -90,6 +94,8 @@ func (k Keeper) AppendComment(
 		//CommentIds: commentIDs,
 		Comments: commentInPost,
 	}
+
+	// if the comment creator is the blog creator, an alert will show up in screen and the comment will not be stored in KV store
 	if creator_post == creator {
 		err := beeep.Alert("Alert!", "You cannot comment yourself", "warning.png")
 		if err != nil {
@@ -105,7 +111,6 @@ func (k Keeper) AppendComment(
 		k.SetCommentCount(ctx, count+1)
 
 	}
-	time.Sleep(5 * time.Second)
 
 	return count
 

@@ -3,6 +3,8 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"math"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,19 +13,26 @@ import (
 
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	current_time := time.Now().Unix()
+	last_blockTime := ctx.BlockTime().Unix()
+	if math.Abs(float64(last_blockTime-current_time)) <= 5 {
+		id := k.AppendComment(
+			ctx,
+			msg.Id,
+			msg.Creator,
+			msg.Body,
+			msg.PostID,
+			msg.Time,
+		)
 
-	id := k.AppendComment(
-		ctx,
-		msg.Id,
-		msg.Creator,
-		msg.Body,
-		msg.PostID,
-		msg.Time,
-	)
+		return &types.MsgCreateCommentResponse{
+			Id: id,
+		}, nil
 
-	return &types.MsgCreateCommentResponse{
-		Id: id,
-	}, nil
+	} else {
+		return nil, nil
+	}
+
 }
 
 func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComment) (*types.MsgUpdateCommentResponse, error) {
