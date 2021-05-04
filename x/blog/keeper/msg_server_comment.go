@@ -15,9 +15,13 @@ import (
 
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	// Get the comment creation time
 	current_time := time.Now().Unix()
+	// Get last block's generation time
 	last_blockTime := ctx.BlockTime().Unix()
+
 	creator_post := k.GetPost(ctx, msg.PostID).Creator
+
 	// if comment time is within ctx.BlockTime() - 5 seconds and ctx.BlockTime() + 5 seconds, and comment creator is not the post creator
 	// comment is valid
 	if math.Abs(float64(last_blockTime-current_time)) <= 5 && creator_post != msg.Creator {
@@ -35,11 +39,20 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		}, nil
 
 	} else {
-		err := beeep.Alert("Alert!", "You cannot comment yourself", "warning.png")
-		if err != nil {
-			panic(err)
+		if creator_post == msg.Creator {
+			err := beeep.Alert("Alert!", "You cannot comment yourself", "warning.png")
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			err := beeep.Alert("Alert!", "Commenting time must be within 5 seconds", "warning.png")
+			if err != nil {
+				panic(err)
+			}
+
 		}
 		return nil, nil
+
 	}
 
 }
