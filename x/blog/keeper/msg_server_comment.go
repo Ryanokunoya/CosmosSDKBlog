@@ -23,7 +23,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	creator_post := k.GetPost(ctx, msg.PostID).Creator
 
 	// if comment time is within ctx.BlockTime() - 5 seconds and ctx.BlockTime() + 5 seconds, and comment creator is not the post creator
-	// comment is valid
+	// comment is validdfd
 	if math.Abs(float64(last_blockTime-current_time)) <= 5 && creator_post != msg.Creator {
 		id := k.AppendComment(
 			ctx,
